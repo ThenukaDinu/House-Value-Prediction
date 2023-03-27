@@ -8,5 +8,6 @@
         public DateOnly BirthDay { get; set; }
         public string AvatarLink { get; set; }
         public ICollection<Interest> Interests { get; set; }
+        public ICollection<Role> Roles { get; set; }
     }
 }
