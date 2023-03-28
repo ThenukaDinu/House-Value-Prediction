@@ -1,7 +1,4 @@
-using Micro_House_Manage_API.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace Micro_House_Manage_API
+namespace Micro_Authentication_API
 {
     public class Program
     {
@@ -12,17 +9,9 @@ namespace Micro_House_Manage_API
             // Add services to the container.
 
             builder.Services.AddControllers();
-
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            builder.Services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
 
             var app = builder.Build();
 
