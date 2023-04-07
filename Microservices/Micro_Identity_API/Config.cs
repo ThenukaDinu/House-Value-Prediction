@@ -7,17 +7,34 @@ namespace Micro_Authentication_API
     {
         public static IEnumerable<IdentityResource> IdentityResources =>
                    new IdentityResource[]
-                   {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                   };
+               {
+                    new IdentityResources.OpenId(),
+                    new IdentityResources.Profile(),
+                    new IdentityResource
+                    {
+                        Name = "role",
+                        UserClaims = new List<string> {"role"}
+                    }
+               };
 
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("scope1"),
-                new ApiScope("scope2"),
+                new ApiScope("all"),
+                new ApiScope("read"),
+                new ApiScope("write"),
+                new ApiScope("update"),
+                new ApiScope("delete"),
             };
+        public static IEnumerable<ApiResource> ApiResources => new[]
+        {
+            new ApiResource("weatherapi")
+        {
+            Scopes = new List<string> { "all", "read", "write", "update", "delete" },
+            ApiSecrets = new List<Secret> {new Secret("ScopeSecret".Sha256())},
+            UserClaims = new List<string> {"role"}
+        }
+        };
 
         public static IEnumerable<Client> Clients =>
             new Client[]
@@ -31,7 +48,7 @@ namespace Micro_Authentication_API
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
-                    AllowedScopes = { "scope1" }
+                    AllowedScopes = { "all", "read", "write", "update", "delete" }
                 },
 
                 // interactive client using code flow + pkce
@@ -42,12 +59,12 @@ namespace Micro_Authentication_API
 
                     AllowedGrantTypes = GrantTypes.Code,
 
-                    RedirectUris = { "https://localhost:44300/signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
+                    RedirectUris = { "https://localhost:44311/signin-oidc" },
+                    FrontChannelLogoutUri = "https://localhost:44311/signout-oidc",
+                    PostLogoutRedirectUris = { "https://localhost:44311/signout-callback-oidc" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "scope2" }
+                    AllowedScopes = { "openid", "profile", "all", "read", "write", "update", "delete" }
                 },
             };
     }
