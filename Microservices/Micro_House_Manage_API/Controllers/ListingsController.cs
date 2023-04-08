@@ -16,25 +16,25 @@ namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InquiriesController : ControllerBase
+    public class ListingsController : ControllerBase
     {
-        private readonly IInquiryRepository _inquiryRepository;
+        private readonly IListingRepository _listingRepository;
         private readonly IMapper _mapper;
 
-        public InquiriesController(IInquiryRepository inquiryRepository, IMapper mapper)
+        public ListingsController(IListingRepository listingRepository, IMapper mapper)
         {
-            _inquiryRepository = inquiryRepository;
+            _listingRepository = listingRepository;
             _mapper = mapper;
         }
 
-        // GET: api/Inquiries
+        // GET: api/Listings
         [HttpGet]
-        public async Task<ActionResult<ICollection<InquiryDto>>> GetInquiries()
+        public async Task<ActionResult<IEnumerable<ListingDto>>> GetListings()
         {
             try
             {
-                var entities = await _inquiryRepository.GetAllAsync();
-                return Ok(_mapper.Map<List<InquiryDto>>(entities));
+                var entities = await _listingRepository.GetAllAsync();
+                return Ok(_mapper.Map<List<ListingDto>>(entities));
             }
             catch (Exception ex)
             {
@@ -43,18 +43,18 @@ namespace Micro_House_Manage_API.Controllers
             }
         }
 
-        // GET: api/Inquiries/5
+        // GET: api/Listings/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<InquiryDto>> GetInquiry(int id)
+        public async Task<ActionResult<ListingDto>> GetListing(int id)
         {
             try
             {
-                var entity = await _inquiryRepository.GetByIdAsync(id);
+                var entity = await _listingRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return NotFound();
                 }
-                return Ok(_mapper.Map<InquiryDto>(entity));
+                return Ok(_mapper.Map<ListingDto>(entity));
             }
             catch (Exception ex)
             {
@@ -63,26 +63,26 @@ namespace Micro_House_Manage_API.Controllers
             }
         }
 
-        // PUT: api/Inquiries/5
+        // PUT: api/Listings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInquiry(int id, InquiryDto inquiryDto)
+        public async Task<IActionResult> PutListing(int id, ListingDto listingDto)
         {
-            if (id != inquiryDto.Id)
+            if (id != listingDto.Id)
             {
                 return BadRequest();
             }
 
             try
             {
-                var inquiry = _mapper.Map<Inquiry>(inquiryDto);
-                _inquiryRepository.Update(inquiry);
-                await _inquiryRepository.SaveChangesAsync();
+                var listing = _mapper.Map<Listing>(listingDto);
+                _listingRepository.Update(listing);
+                await _listingRepository.SaveChangesAsync();
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
-                bool exists = await _inquiryRepository.ExistsAsync(inquiry => inquiry.Id == id);
+                bool exists = await _listingRepository.ExistsAsync(listing => listing.Id == id);
                 if (!exists)
                 {
                     return NotFound();
@@ -98,19 +98,19 @@ namespace Micro_House_Manage_API.Controllers
             }
         }
 
-        // POST: api/Inquiries
+        // POST: api/Listings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<InquiryDto>> PostInquiry(InquiryDto inquiryDto)
+        public async Task<ActionResult<ListingDto>> PostListing(ListingDto listingDto)
         {
             try
             {
-                var inquiry = _mapper.Map<Inquiry>(inquiryDto);
-                await _inquiryRepository.AddAsync(inquiry);
-                await _inquiryRepository.SaveChangesAsync();
+                var listing = _mapper.Map<Listing>(listingDto);
+                await _listingRepository.AddAsync(listing);
+                await _listingRepository.SaveChangesAsync();
 
-                var savedInquiry = _mapper.Map<InquiryDto>(inquiry);
-                return CreatedAtAction(nameof(GetInquiry), new { id = savedInquiry.Id }, savedInquiry);
+                var savedListing = _mapper.Map<ListingDto>(listing);
+                return CreatedAtAction(nameof(GetListing), new { id = savedListing.Id }, savedListing);
             }
             catch (Exception ex)
             {
@@ -119,19 +119,19 @@ namespace Micro_House_Manage_API.Controllers
             }
         }
 
-        // DELETE: api/Inquiries/5
+        // DELETE: api/Listings/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInquiry(int id)
+        public async Task<IActionResult> DeleteListing(int id)
         {
             try
             {
-                var entity = await _inquiryRepository.GetByIdAsync(id);
+                var entity = await _listingRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return NotFound();
                 }
-                _inquiryRepository.Delete(entity);
-                await _inquiryRepository.SaveChangesAsync();
+                _listingRepository.Delete(entity);
+                await _listingRepository.SaveChangesAsync();
                 return NoContent();
             }
             catch (Exception ex)

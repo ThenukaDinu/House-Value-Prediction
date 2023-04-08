@@ -1,8 +1,8 @@
 ﻿using static Micro_House_Manage_API.Data.PublicEnum;
 
-namespace Micro_House_Manage_API.Models
+namespace Micro_House_Manage_API.Dtos
 {
-    public class Inquiry : CommonModel
+    public class InquiryDto
     {
         public int Id { get; set; }
         public Guid? UserId { get; set; }
@@ -10,8 +10,5 @@ namespace Micro_House_Manage_API.Models
         public InquiryStatus InquiryStatus { get; set; }
         public string ResponseMessage { get; set; }
         public int HouseId { get; set; }
-        public DateTime ResponseTime { get; set; }
-        public Listing Listing { get; set; }
-        public House House { get; set; }
     }
 }

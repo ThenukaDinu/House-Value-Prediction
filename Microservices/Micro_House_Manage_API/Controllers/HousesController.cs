@@ -9,6 +9,8 @@ using Micro_House_Manage_API.Data;
 using Micro_House_Manage_API.Models;
 using Micro_House_Manage_API.Interfaces;
 using NuGet.Protocol.Core.Types;
+using AutoMapper;
+using Micro_House_Manage_API.Dtos;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -17,20 +19,22 @@ namespace Micro_House_Manage_API.Controllers
     public class HousesController : ControllerBase
     {
         private readonly IHouseRepository _houseRepository;
+        private readonly IMapper _mapper;
 
-        public HousesController(IHouseRepository houseRepository)
+        public HousesController(IHouseRepository houseRepository, IMapper mapper)
         {
             _houseRepository = houseRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Houses
         [HttpGet]
-        public async Task<ActionResult<ICollection<House>>> GetHouses()
+        public async Task<ActionResult<ICollection<HouseDto>>> GetHouses()
         {
             try
             {
                 var entities = await _houseRepository.GetAllAsync();
-                return Ok(entities);
+                return Ok(_mapper.Map<List<HouseDto>>(entities));
             }
             catch (Exception ex)
             {
@@ -41,7 +45,7 @@ namespace Micro_House_Manage_API.Controllers
 
         // GET: api/Houses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<House>> GetHouse(int id)
+        public async Task<ActionResult<HouseDto>> GetHouse(int id)
         {
             try
             {
@@ -50,7 +54,7 @@ namespace Micro_House_Manage_API.Controllers
                 {
                     return NotFound();
                 }
-                return Ok(entity);
+                return Ok(_mapper.Map<HouseDto>(entity));
             }
             catch (Exception ex)
             {
@@ -62,15 +66,16 @@ namespace Micro_House_Manage_API.Controllers
         // PUT: api/Houses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHouse(int id, House house)
+        public async Task<IActionResult> PutHouse(int id, HouseDto houseDto)
         {
-            if (id != house.Id)
+            if (id != houseDto.Id)
             {
                 return BadRequest();
             }
 
             try
             {
+                var house = _mapper.Map<House>(houseDto);
                 _houseRepository.Update(house);
                 await _houseRepository.SaveChangesAsync();
                 return NoContent();
@@ -96,13 +101,16 @@ namespace Micro_House_Manage_API.Controllers
         // POST: api/Houses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<House>> PostHouse(House house)
+        public async Task<ActionResult<HouseDto>> PostHouse(HouseDto houseDto)
         {
             try
             {
+                var house = _mapper.Map<House>(houseDto);
                 await _houseRepository.AddAsync(house);
                 await _houseRepository.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetHouse), new { id = house.Id }, house);
+
+                var savedHouseDto = _mapper.Map<HouseDto>(house);
+                return CreatedAtAction(nameof(GetHouse), new { id = savedHouseDto.Id }, savedHouseDto);
             }
             catch (Exception ex)
             {
@@ -128,7 +136,6 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, ex.Message);
             }
         }

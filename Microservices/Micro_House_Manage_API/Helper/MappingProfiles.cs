@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Micro_House_Manage_API.Dtos;
+using Micro_House_Manage_API.Models;
 
 namespace Micro_House_Manage_API.Helper
 {
@@ -6,7 +8,9 @@ namespace Micro_House_Manage_API.Helper
     {
         public MappingProfiles()
         {
-            
+            CreateMap<House, HouseDto>();
+            CreateMap<Inquiry, inquiryDto>();
+            CreateMap<Listing, ListingDto>();
         }
     }
 }

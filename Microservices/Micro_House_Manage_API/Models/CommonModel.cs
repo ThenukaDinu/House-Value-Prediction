@@ -2,7 +2,12 @@
 {
     public class CommonModel
     {
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        private DateTime? _createdDate;
+        public DateTime? CreatedDate 
+        {
+            get => _createdDate;
+            set => _createdDate = value ?? DateTime.UtcNow;
+        }
+        public DateTime? ModifiedDate { get; set; }
     }
 }
