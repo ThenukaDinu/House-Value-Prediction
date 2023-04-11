@@ -1,10 +1,10 @@
-﻿namespace Micro_Email_Service
+﻿using Micro_Email_Service.Services;
+
+public class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
+        var service = new MessageConsumer();
+        service.Consume();
     }
 }

@@ -24,6 +24,7 @@ namespace Micro_House_Manage_API
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IInquiryRepository, InqueryRepository>();
             builder.Services.AddScoped<IListingRepository, ListingRepository>();
+            builder.Services.AddScoped<IMessageProducer, MessageProducer>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

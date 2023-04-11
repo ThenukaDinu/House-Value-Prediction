@@ -1,6 +1,8 @@
 ﻿using RabbitMQ.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
+using System.Text;
 
 namespace Micro_House_Manage_API.Services
 {
@@ -12,7 +14,7 @@ namespace Micro_House_Manage_API.Services
             _rabbitMQSettings = rabbitMQSettings;
         }
 
-        public void SendingMessage<T>(T message)
+        public void SendingMessage<T>(T message, string queue, string routingKey)
         {
             var factory = new ConnectionFactory()
             {
@@ -26,9 +28,12 @@ namespace Micro_House_Manage_API.Services
 
             using var channel = connection.CreateModel();
 
-            channel.QueueDeclare("send-emails", durable: true, exclusive: true);
+            channel.QueueDeclare(queue, durable: true, exclusive: false);
 
+            var jsonString = JsonSerializer.Serialize(message);
+            var body = Encoding.UTF8.GetBytes(jsonString);
 
+            channel.BasicPublish(exchange: "", routingKey: routingKey, body: body);
         }
     }
 }
