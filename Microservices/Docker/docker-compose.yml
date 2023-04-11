@@ -1,55 +1,22 @@
+version: '3.8'
 services:
-  keyclock_auth:
-    container_name: keyclock_auth
-    image: quay.io/keycloak/keycloak:21.0.1
-    command: start-dev
-    environment:
-        KEYCLOAK_ADMIN: admin
-        KEYCLOAK_ADMIN_PASSWORD: admin
-        DB_DATABASE: keycloak
-        DB_SCHEMA: public
-        DB_USER: keycloak
-        DB_PASSWORD: password
-        DB_ADDR: postgres_keyclock_auth
-    ports:
-        - "8890:8080"
-    restart: unless-stopped
-    networks:
-        - microserices_network
-    depends_on:
-        postgres_keyclock_auth:
-            condition: service_healthy
-
-  postgres_keyclock_auth:
-    container_name: postgres_keyclock_auth
-    image: postgres
-    command: postgres -c 'max_connections=200'
-    volumes:
-        - pgdata_keycloak_auth:/var/lib/postgressql/data
-    environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: password
-    healthcheck:
-        test: "exit 0"
-    ports:
-    - "5432:5432"
-    networks:
-        - microserices_network
   rabbitmq:
-    image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
+    image: rabbitmq:3.8-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=user
+        - RABBITMQ_DEFAULT_PASS=E3C20CE98
     ports:
+        # rabbitMq instance
         - 5672:5672
+        # web interface
         - 15672:15672
     volumes:
         - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
         - microserices_network
-    
-volumes:
-   pgdata_keycloak_auth:
+
 networks:
     microserices_network:
         driver: bridge

@@ -1,6 +1,7 @@
 using Micro_House_Manage_API.Data;
 using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Repository;
+using Micro_House_Manage_API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -13,14 +14,17 @@ namespace Micro_House_Manage_API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
+            
             builder.Services.AddControllers();
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddSingleton<IMessageProducer, MessageProducer>();
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IInquiryRepository, InqueryRepository>();
             builder.Services.AddScoped<IListingRepository, ListingRepository>();
+            builder.Services.AddScoped<IMessageProducer, MessageProducer>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

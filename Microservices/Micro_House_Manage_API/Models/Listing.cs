@@ -11,5 +11,6 @@ namespace Micro_House_Manage_API.Models
         public ListingStatus ListingStatus { get; set; }
         public bool IsFeatured { get; set; }
         public House House { get; set; }
+        public double ListingPrice { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Micro_House_Manage_API.Helper
         public MappingProfiles()
         {
             CreateMap<House, HouseDto>();
-            CreateMap<Inquiry, inquiryDto>();
+            CreateMap<Inquiry, InquiryDto>();
             CreateMap<Listing, ListingDto>();
         }
     }
