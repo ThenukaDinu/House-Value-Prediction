@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Micro_House_Manage_API.Dtos;
-using Micro_House_Manage_API.Models;
+using Models;
 
 namespace Micro_House_Manage_API.Helper
 {

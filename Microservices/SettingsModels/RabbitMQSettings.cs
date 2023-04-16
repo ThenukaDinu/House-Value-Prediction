@@ -1,4 +1,4 @@
-﻿namespace Micro_House_Manage_API.Services
+﻿namespace SettingsModels
 {
     public class RabbitMQSettings
     {

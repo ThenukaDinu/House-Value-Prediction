@@ -1,6 +1,6 @@
-﻿using static Micro_House_Manage_API.Data.PublicEnum;
+﻿using static Data.PublicEnum;
 
-namespace Micro_House_Manage_API.Models
+namespace Models
 {
     public class Notification : CommonModel
     {

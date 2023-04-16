@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Micro_House_Manage_API.Data;
-using Micro_House_Manage_API.Models;
+using Models;
 using Micro_House_Manage_API.Interfaces;
 using NuGet.Protocol.Core.Types;
 using AutoMapper;
@@ -20,11 +20,13 @@ namespace Micro_House_Manage_API.Controllers
     {
         private readonly IHouseRepository _houseRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<HousesController> _logger;
 
-        public HousesController(IHouseRepository houseRepository, IMapper mapper)
+        public HousesController(IHouseRepository houseRepository, IMapper mapper, ILogger<HousesController> logger)
         {
             _houseRepository = houseRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: api/Houses
@@ -33,12 +35,14 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
+                _logger.LogInformation("HousesController GetHouses executing...");
+
                 var entities = await _houseRepository.GetAllAsync();
                 return Ok(_mapper.Map<List<HouseDto>>(entities));
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.StackTrace);
                 return StatusCode(500, ex.Message);
             }
         }

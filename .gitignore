@@ -6,3 +6,12 @@ Microservices/Micro_Identity_API/bin
 Microservices/Micro_Identity_API/obj
 Microservices/Micro_Email_Service/bin
 Microservices/Micro_Email_Service/obj
+Logs
+Microservices/Data/bin
+Microservices/Data/obj
+Microservices/Models/bin
+Microservices/Models/obj
+Microservices/SettingsModels/bin
+Microservices/SettingsModels/obj
+Microservices/Helpers/bin
+Microservices/Helpers/obj

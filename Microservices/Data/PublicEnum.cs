@@ -1,4 +1,4 @@
-﻿namespace Micro_House_Manage_API.Data
+﻿namespace Data
 {
     public class PublicEnum
     {
@@ -30,6 +30,16 @@
             Sent = 1,
             Failed = 2,
             Queued = 3,
+        }
+
+        public enum EmailTemplateType
+        {
+            Welcome = 0,
+            PredictionSuccess = 1,
+            PredictionFailure = 2,
+            PredictionPendding = 3,
+            WebScrapingFinished = 4,
+            ModelTrainingFinished = 5
         }
     }
 }
