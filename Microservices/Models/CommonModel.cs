@@ -1,4 +1,4 @@
-﻿namespace Micro_House_Manage_API.Models
+﻿namespace Models
 {
     public class CommonModel
     {

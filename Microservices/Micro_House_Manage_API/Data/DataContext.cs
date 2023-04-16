@@ -1,4 +1,4 @@
-﻿using Micro_House_Manage_API.Models;
+﻿using Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Micro_House_Manage_API.Data

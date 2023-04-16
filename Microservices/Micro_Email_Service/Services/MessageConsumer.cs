@@ -6,19 +6,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using SettingsModels;
+using Models;
+using System.Text.Json;
 
 namespace Micro_Email_Service.Services
 {
     public class MessageConsumer : IMessageConsumer
     {
+        private readonly ILogger<MessageConsumer> _logger;
+        private readonly IConfiguration _config;
+        private readonly IEmailSendService _emailSendService;
+
+        public MessageConsumer(ILogger<MessageConsumer> logger, IConfiguration config, IEmailSendService emailSendService)
+        {
+            _logger = logger;
+            _config = config;
+            _emailSendService = emailSendService;
+        }
+
         public void Consume()
         {
+            _logger.LogInformation("Consume starting...");
+            var rabbitMqSettings = _config.GetSection("RabbitMQ").Get<RabbitMQSettings>();
+
             var factory = new ConnectionFactory()
             {
-                HostName = "localhost",
-                UserName = "user",
-                Password = "E3C20CE98",
-                VirtualHost = "/"
+                HostName = rabbitMqSettings.HostName,
+                UserName = rabbitMqSettings.UserName,
+                Password = rabbitMqSettings.Password,
+                VirtualHost = rabbitMqSettings.VirtualHost
             };
 
             var connection = factory.CreateConnection();
@@ -31,11 +50,19 @@ namespace Micro_Email_Service.Services
 
             consumer.Received += (model, eventArgs) =>
             {
+                _logger.LogInformation("Recived new message");
+
                 // getting byte array[]
                 var body = eventArgs.Body.ToArray();
 
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"A email has been recieved - {message}");
+                string info = $"A email has been recieved - {message}";
+                _logger.LogInformation(info);
+                Console.WriteLine(info);
+
+                EmailMessage email = JsonSerializer.Deserialize<EmailMessage>(message);
+                MailSettings mailSettings = _config.GetSection("MailSettings").Get<MailSettings>();
+                _emailSendService.Send(mailSettings, email.Body, email.Subject, email.To);
             };
 
             channel.BasicConsume("emails", autoAck: true, consumer);

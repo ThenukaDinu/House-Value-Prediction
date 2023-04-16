@@ -1,7 +1,8 @@
-﻿using Micro_House_Manage_API.Models;
-using Micro_House_Manage_API.Services;
+﻿using Micro_House_Manage_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
+using Models;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -25,14 +26,14 @@ namespace Micro_House_Manage_API.Controllers
             {
                 _logger.Log(LogLevel.Information, "Emails Get");
 
-                var email = new Email
+                var email = new EmailMessage()
                 {
                     Body = "<p>This is a test email body</p>",
                     Subject = "This is a test email subject",
                     To = "thenukadev@gmail.com"
                 };
 
-                _messageProducer.SendingMessage<Email>(email, "emails", "emails");
+                _messageProducer.SendingMessage<EmailMessage>(email, "emails", "emails");
 
                 return Ok();
             }

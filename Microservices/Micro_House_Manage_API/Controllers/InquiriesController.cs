@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Micro_House_Manage_API.Data;
-using Micro_House_Manage_API.Models;
+using Models;
 using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Repository;
 using AutoMapper;
