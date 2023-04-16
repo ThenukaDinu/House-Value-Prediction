@@ -61,8 +61,8 @@ namespace Micro_Email_Service.Services
                 Console.WriteLine(info);
 
                 EmailMessage email = JsonSerializer.Deserialize<EmailMessage>(message);
-                MailSettings mailSettings = _config.GetSection("MailSettings").Get<MailSettings>();
-                _emailSendService.Send(mailSettings, email.Body, email.Subject, email.To);
+                
+                _emailSendService.SendEmailAsync(email.Body, email.Subject, email.To, email.Attachments);
             };
 
             channel.BasicConsume("emails", autoAck: true, consumer);

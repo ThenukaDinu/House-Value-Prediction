@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Micro_Email_Service.Models
+namespace Models.Requests
 {
-    public class Email
+    public class MailRquest
     {
         public string ToEmail { get; set; }
         public string Subject { get; set; }

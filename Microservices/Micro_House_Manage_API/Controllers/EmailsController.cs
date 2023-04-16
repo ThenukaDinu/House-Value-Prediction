@@ -1,8 +1,11 @@
-﻿using Micro_House_Manage_API.Services;
+﻿using Helpers;
+using Micro_House_Manage_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
 using Models;
+using Models.Requests;
+using System.Net.Mail;
+using Attachment = Models.Attachment;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -19,21 +22,34 @@ namespace Micro_House_Manage_API.Controllers
             _messageProducer = messageProducer;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpPost]
+        public IActionResult Post([FromForm] MailRquest mailRquest)
         {
             try
             {
-                _logger.Log(LogLevel.Information, "Emails Get");
+                _logger.Log(LogLevel.Information, "Email send called.");
+
+                List<Attachment> attachments = new();
+                mailRquest.Attachments.ForEach(async x =>
+                {
+                    var byteArray = await FileHelpers.ConvertFileToByteArrayAsync(x);
+                    attachments.Add(new Attachment
+                    {
+                        ContentType = x.ContentType,
+                        FileName = x.FileName,
+                        FileBytes = byteArray
+                    });
+                });
 
                 var email = new EmailMessage()
                 {
-                    Body = "<p>This is a test email body</p>",
-                    Subject = "This is a test email subject",
-                    To = "thenukadev@gmail.com"
+                    Body = mailRquest.Body,
+                    Subject = mailRquest.Subject,
+                    To = mailRquest.ToEmail,
+                    Attachments = attachments
                 };
 
-                _messageProducer.SendingMessage<EmailMessage>(email, "emails", "emails");
+                _messageProducer.SendingMessage(email, "emails", "emails");
 
                 return Ok();
             }

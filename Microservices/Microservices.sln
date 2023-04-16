@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Micro_Email_Service", "Micr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsModels", "SettingsModels\SettingsModels.csproj", "{39C43494-0084-43E8-9E21-754F01EB1611}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{5BD4B5E3-0808-44C9-A5B1-6665D29BD86C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{5BD4B5E3-0808-44C9-A5B1-6665D29BD86C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{B12CF1B6-B367-4842-A3AE-18A6DCC3AA9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{B12CF1B6-B367-4842-A3AE-18A6DCC3AA9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{99A33611-53C8-4476-AD3D-35ADBAAEB339}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B12CF1B6-B367-4842-A3AE-18A6DCC3AA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B12CF1B6-B367-4842-A3AE-18A6DCC3AA9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B12CF1B6-B367-4842-A3AE-18A6DCC3AA9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A33611-53C8-4476-AD3D-35ADBAAEB339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A33611-53C8-4476-AD3D-35ADBAAEB339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A33611-53C8-4476-AD3D-35ADBAAEB339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A33611-53C8-4476-AD3D-35ADBAAEB339}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
