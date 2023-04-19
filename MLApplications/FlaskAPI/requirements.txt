@@ -1,1 +1,6 @@
 Flask==2.2.3
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn

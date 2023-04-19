@@ -1,8 +1,10 @@
 import logging
-from flask import Flask, Request
+from flask import Flask, request, jsonify
+import pickle
 from logging.handlers import TimedRotatingFileHandler
 import os
 from datetime import datetime
+import pandas as pd
 app = Flask(__name__)
 
 if os.environ.get('FLASK_ENV') == 'production':
@@ -10,6 +12,7 @@ if os.environ.get('FLASK_ENV') == 'production':
 else:
     log_dir = 'C:\\Logs\\ML_Flask_API'
 
+# setup logging
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
@@ -26,6 +29,14 @@ logger = logging.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
+# Get the full path to the model file
+model_file_path = os.path.join(
+    os.getcwd(), 'Models', 'house_value_prediction_RF01.h5')
+
+# Load the trained machine learning model
+with open(model_file_path, 'rb') as f:
+    model = pickle.load(f)
+
 
 @app.route('/', methods=['GET'])
 def get_request():
@@ -33,11 +44,31 @@ def get_request():
     return 'Prediction server is up and running...'
 
 
-@app.route('/get-value-prediction', methods=['POST'])
-def post_request():
-    app.logger.info('/get-value-prediction end point being called')
-    data = request.get_json()
-    return f'This is a POST request. You sent: {data}'
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        app.logger.info('/predict end point being called')
+
+        # Extract the JSON payload from the request
+        data = request.get_json()
+        app.logger.info(f'input data to predict: {data}')
+
+        # Convert the JSON payload to a pandas dataframe
+        df = pd.DataFrame.from_dict(data)
+
+        # Make predictions using the loaded machine learning model
+        predictions = model.predict(df)
+
+        # Convert the predictions to a list
+        output = predictions.tolist()
+
+        app.logger.info(f'predictions: {output}')
+
+        # Return the predictions in JSON format
+        return jsonify({'predictions': output})
+    except Exception as e:
+        app.logger.error(f'error: {e}')
+        return jsonify({'error': str(e)})
 
 
 if __name__ == '__main__':

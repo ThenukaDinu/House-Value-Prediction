@@ -13,6 +13,9 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # Copy the rest of the application code into the container at /app
 COPY app.py .
 
+# Copy the trained model file
+COPY Models/house_value_prediction_RF01.h5 Models/
+
 # Set up logging directory
 RUN mkdir -p /var/log/ML_Flask_API
 
