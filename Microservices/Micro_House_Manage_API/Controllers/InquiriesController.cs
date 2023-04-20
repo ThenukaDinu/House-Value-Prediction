@@ -20,11 +20,13 @@ namespace Micro_House_Manage_API.Controllers
     {
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<InquiriesController> _logger;
 
-        public InquiriesController(IInquiryRepository inquiryRepository, IMapper mapper)
+        public InquiriesController(IInquiryRepository inquiryRepository, IMapper mapper, ILogger<InquiriesController> logger)
         {
             _inquiryRepository = inquiryRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: api/Inquiries
