@@ -24,3 +24,6 @@ MLApplications/FlaskAPI/__pycache__
 
 Microservices/Micro_House_Manage_API.Tests/bin
 Microservices/Micro_House_Manage_API.Tests/obj
+
+Microservices/Micro_Email_Service.Tests/bin
+Microservices/Micro_Email_Service.Tests/obj
