@@ -20,16 +20,18 @@ namespace Micro_House_Manage_API.Controllers
     {
         private readonly IListingRepository _listingRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ListingsController> _logger;
 
-        public ListingsController(IListingRepository listingRepository, IMapper mapper)
+        public ListingsController(IListingRepository listingRepository, IMapper mapper, ILogger<ListingsController> logger)
         {
             _listingRepository = listingRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: api/Listings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ListingDto>>> GetListings()
+        public async Task<ActionResult<ICollection<ListingDto>>> GetListings()
         {
             try
             {

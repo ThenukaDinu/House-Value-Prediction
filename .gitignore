@@ -17,3 +17,8 @@ Microservices/Helpers/bin
 Microservices/Helpers/obj
 
 MLApplications/FlaskAPI/Models
+
+.idea/
+
+Microservices/Micro_House_Manage_API.Tests/bin
+Microservices/Micro_House_Manage_API.Tests/obj
