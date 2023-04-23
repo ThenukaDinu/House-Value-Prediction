@@ -8,6 +8,8 @@
 
 ## ml_flask_api: http://localhost:44343/
 
+## webApp URL: http://localhost:44344/
+
 ## docker commands for ml_flask_api:
 
 <br>
