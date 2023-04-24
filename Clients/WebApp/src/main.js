@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
+import axios from 'axios'
 import App from './App.vue'
 import router from './router'
 
@@ -16,6 +16,7 @@ app.mount('#app')
 
 router.beforeEach(async (to, from, next) => {
   const { isAuthenticated, authenticate, user } = useAuthStore()
+
   if (isAuthenticated) {
     //already signed in, we can navigate anywhere
     next()
@@ -29,3 +30,20 @@ router.beforeEach(async (to, from, next) => {
     next()
   }
 })
+
+axios.interceptors.request.use(
+  (config) => {
+    const { user } = useAuthStore()
+    console.log(user)
+    if (user) {
+      const authToken = user.access_token
+      if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`
+      }
+    }
+    return config
+  },
+  (err) => {
+    console.error(err)
+  }
+)

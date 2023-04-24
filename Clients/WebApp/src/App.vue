@@ -1,7 +1,21 @@
-<script setup></script>
+<script setup>
+import userLayout from './layouts/userLayout.vue'
+import { useAuthStore } from './stores/auth'
+import GuestLayout from './layouts/guestLayout.vue'
+import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+
+const store = useAuthStore()
+const { isAuthenticated } = storeToRefs(store)
+</script>
 
 <template>
-  <RouterView />
+  <userLayout v-if="isAuthenticated">
+    <RouterView />
+  </userLayout>
+  <GuestLayout v-else>
+    <RouterView />
+  </GuestLayout>
 </template>
 
 <style scoped>

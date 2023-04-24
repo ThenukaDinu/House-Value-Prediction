@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 
 const router = useRouter()
+const { setIsAuthenticated } = useAuthStore()
 async function doAuth() {
   try {
     var result = await mgr.signinRedirectCallback()
@@ -13,11 +14,12 @@ async function doAuth() {
     if (result.state !== undefined) {
       console.log('redirection URL: ' + result.state)
       returnToUrl = result.state
+      setIsAuthenticated(true)
       setTimeout(() => {
         router.push({ path: returnToUrl })
       }, 1000)
     } else {
-      router.push({ name: 'Unauthorized' })
+      router.push({ path: returnToUrl })
     }
   } catch (e) {
     console.log(e)

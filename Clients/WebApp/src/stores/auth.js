@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
   const mrg = ref(mgr)
 
   if (localStorage.getItem('isAuthenticated') !== null) {
-    isAuthenticated.value = Boolean(localStorage.getItem('isAuthenticated'))
+    isAuthenticated.value = String(localStorage.getItem('isAuthenticated')).toLowerCase() === 'true'
   }
 
   if (localStorage.getItem('user') !== null && localStorage.getItem('user') !== undefined) {
@@ -40,6 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
       isAuthenticated.value = true
       user.value = userDTO
     } else {
+      isAuthenticated.value = false
       await signIn(returnPath)
     }
   }
