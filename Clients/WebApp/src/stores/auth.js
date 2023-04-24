@@ -1,21 +1,44 @@
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import mgr from '../../services/security'
 
 export const useAuthStore = defineStore('auth', () => {
-  const isAuthenticated = ref(false)
-  const user = ref('')
+  let isAuthenticated = ref(false)
+  let user = ref({})
   const mrg = ref(mgr)
+
+  if (localStorage.getItem('isAuthenticated') !== null) {
+    isAuthenticated.value = Boolean(localStorage.getItem('isAuthenticated'))
+  }
+
+  if (localStorage.getItem('user') !== null && localStorage.getItem('user') !== undefined) {
+    user.value = JSON.parse(localStorage.getItem('user'))
+  }
+
+  watch(
+    isAuthenticated,
+    (authVal) => {
+      localStorage.setItem('isAuthenticated', authVal)
+    },
+    { deep: true }
+  )
+  watch(
+    user,
+    (userVal) => {
+      localStorage.setItem('user', JSON.stringify(userVal))
+    },
+    { deep: true }
+  )
 
   function setIsAuthenticated(payload) {
     isAuthenticated.value = payload
   }
 
   async function authenticate(returnPath) {
-    const user = await getUser() //see if the user details are in local storage
-    if (!!user) {
+    const userDTO = await getUser() //see if the user details are in local storage
+    if (!!userDTO) {
       isAuthenticated.value = true
-      user.value = user
+      user.value = userDTO
     } else {
       await signIn(returnPath)
     }
@@ -39,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
     setIsAuthenticated,
     authenticate,
     getUser,
-    signIn
+    signIn,
+    user
   }
 })

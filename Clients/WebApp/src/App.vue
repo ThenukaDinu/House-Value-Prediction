@@ -1,19 +1,4 @@
-<script>
-import { RouterLink, RouterView } from 'vue-router'
-
-export default {
-  // data() {
-  //   return {
-  //     isAuthenticated: false
-  //   }
-  // },
-  // methods: {
-  //   async authenticate(returnPath) {
-  //     console.log('yet to be implemented')
-  //   }
-  // }
-}
-</script>
+<script setup></script>
 
 <template>
   <RouterView />

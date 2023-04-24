@@ -31,22 +31,4 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from, next) => {
-  const { isAuthenticated, authenticate } = useAuthStore()
-
-  if (isAuthenticated) {
-    //already signed in, we can navigate anywhere
-    next()
-  } else if (to.matched.some((record) => record.meta.requiresAuth)) {
-    //authentication is required. Trigger the sign in process, including the return URI
-    authenticate(to.path).then(() => {
-      console.log('authenticating a protected url:' + to.path)
-      next()
-    })
-  } else {
-    //No auth required. We can navigate
-    next()
-  }
-})
-
 export default router
