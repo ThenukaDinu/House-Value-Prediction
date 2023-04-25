@@ -27,3 +27,33 @@ Microservices/Micro_House_Manage_API.Tests/obj
 
 Microservices/Micro_Email_Service.Tests/bin
 Microservices/Micro_Email_Service.Tests/obj
+
+
+# Logs
+Clients/WebApp/logs
+Clients/WebApp/*.log
+Clients/WebApp/npm-debug.log*
+Clients/WebApp/yarn-debug.log*
+Clients/WebApp/yarn-error.log*
+Clients/WebApp/pnpm-debug.log*
+Clients/WebApp/lerna-debug.log*
+
+Clients/WebApp/node_modules
+Clients/WebApp/.DS_Store
+Clients/WebApp/dist
+Clients/WebApp/dist-ssr
+Clients/WebApp/coverage
+Clients/WebApp/*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+Clients/WebApp/.vscode/*
+Clients/WebApp/!.vscode/extensions.json
+Clients/WebApp/.idea
+Clients/WebApp/*.suo
+Clients/WebApp/*.ntvs*
+Clients/WebApp/*.njsproj
+Clients/WebApp/*.sln
+Clients/WebApp/*.sw?

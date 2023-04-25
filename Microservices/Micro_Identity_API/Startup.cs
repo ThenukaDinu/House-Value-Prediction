@@ -78,10 +78,20 @@ namespace Micro_Authentication_API
                     options.ClientId = "copy client ID from Google here";
                     options.ClientSecret = "copy client secret from Google here";
                 });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors("CorsPolicy");
+
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

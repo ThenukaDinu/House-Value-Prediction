@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Micro_Identity_API.Migrations.ApplicationDb
 {
-    public partial class InitialIdentityMigrations : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
