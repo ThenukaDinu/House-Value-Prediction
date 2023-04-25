@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Micro_Identity_API.Migrations
+namespace Micro_Identity_API.Migrations.PersistedGrantDb
 {
-    public partial class addsqlserver : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

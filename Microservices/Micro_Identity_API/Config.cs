@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4;
+using IdentityServer4.Models;
 using System.Collections.Generic;
 
 namespace Micro_Authentication_API
@@ -66,6 +67,22 @@ namespace Micro_Authentication_API
                     AllowOfflineAccess = true,
                     AllowedScopes = { "openid", "profile", "all", "read", "write", "update", "delete" }
                 },
+                new Client
+                {
+                    ClientId = "VueWebApp",
+                    ClientName = "VueWebApp JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { "http://localhost:44344/auth/callback" },
+                    PostLogoutRedirectUris = { "http://localhost:44344/" },
+                    AllowedCorsOrigins = { "http://localhost:44344", "https://localhost:44344" },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "all", "read", "write", "update", "delete"
+                    }
+                }
             };
     }
 }
