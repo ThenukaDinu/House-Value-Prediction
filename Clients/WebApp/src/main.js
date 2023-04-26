@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import axios from 'axios'
 import App from './App.vue'
 import router from './router'
+import mgr from '../services/security'
 
 import './assets/main.css'
 import { useAuthStore } from './stores/auth'
@@ -32,8 +33,9 @@ router.beforeEach(async (to, from, next) => {
 })
 
 axios.interceptors.request.use(
-  (config) => {
-    const { user } = useAuthStore()
+  async (config) => {
+    const user = await mgr.getUser()
+    const userJson = JSON.parse(JSON.stringify(user))
     console.log(user)
     if (user) {
       const authToken = user.access_token

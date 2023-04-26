@@ -11,11 +11,16 @@ using Micro_House_Manage_API.Interfaces;
 using NuGet.Protocol.Core.Types;
 using AutoMapper;
 using Micro_House_Manage_API.Dtos;
+using Models.Requests;
+using System.Text.Json;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HousesController : ControllerBase
     {
         private readonly IHouseRepository _houseRepository;
@@ -137,6 +142,32 @@ namespace Micro_House_Manage_API.Controllers
                 _houseRepository.Delete(entity);
                 await _houseRepository.SaveChangesAsync();
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("GetValuePrediction")]
+        [Authorize(Roles = "UserRole")]
+        public async Task<IActionResult> GetValuePrediction(List<PredictionRequest> predictionRequests)
+        {
+            try
+            {
+                var user = User;
+                using var client = new HttpClient();
+
+                // Create request content
+                var json = JsonSerializer.Serialize(predictionRequests.ToArray());
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("http://localhost:44343/predict", content);
+
+                // Read the response as a string
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                return Ok(responseString);
             }
             catch (Exception ex)
             {

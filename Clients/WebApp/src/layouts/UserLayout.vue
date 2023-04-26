@@ -40,7 +40,7 @@ onMounted(() => {
   <div>
     <div class="topnav" id="myTopnav">
       <router-link to="/" class="active">Home</router-link>
-      <a href="#get-prediction">Estimate Value</a>
+      <router-link to="/estimate-value">Estimate Value</router-link>
       <a href="#houses">Houses</a>
       <a href="#inqiery">Inquiry</a>
       <a href="#profile">Profile</a>
