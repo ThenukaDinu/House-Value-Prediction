@@ -37,6 +37,22 @@ const router = createRouter({
       path: '/about',
       name: 'About',
       component: () => import('../views/About.vue')
+    },
+    {
+      path: '/estimate-value',
+      name: 'estimate-value',
+      component: () => import('../views/EstimateValue.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/all-houses',
+      name: 'allHouses',
+      component: () => import('../views/AllHouses.vue'),
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })

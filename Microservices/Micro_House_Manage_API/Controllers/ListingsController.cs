@@ -11,6 +11,14 @@ using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Repository;
 using AutoMapper;
 using Micro_House_Manage_API.Dtos;
+using System.Security.Claims;
+using Micro_House_Manage_API.Helper;
+using static Data.PublicEnum;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Micro_House_Manage_API.Services;
+using Models.Requests;
+using System.Net.Mail;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -21,12 +29,16 @@ namespace Micro_House_Manage_API.Controllers
         private readonly IListingRepository _listingRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<ListingsController> _logger;
+        private readonly IMessageProducer _messageProducer;
+        private readonly IUserAccess _userAccess;
 
-        public ListingsController(IListingRepository listingRepository, IMapper mapper, ILogger<ListingsController> logger)
+        public ListingsController(IListingRepository listingRepository, IMapper mapper, ILogger<ListingsController> logger, IUserAccess userAccess, IMessageProducer messageProducer)
         {
             _listingRepository = listingRepository;
             _mapper = mapper;
             _logger = logger;
+            _userAccess = userAccess;
+            _messageProducer = messageProducer;
         }
 
         // GET: api/Listings
@@ -60,7 +72,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -96,6 +108,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -108,15 +121,44 @@ namespace Micro_House_Manage_API.Controllers
             try
             {
                 var listing = _mapper.Map<Listing>(listingDto);
+                var user = User;
+                var userId = user.FindFirstValue("sub");
+                if (!Guid.TryParse(userId, out Guid userGuid))
+                {
+                    return Unauthorized();
+                }
+                listing.UserId = userGuid;
+                listing.ListingStatus = ListingStatus.Available;
+
                 await _listingRepository.AddAsync(listing);
                 await _listingRepository.SaveChangesAsync();
+
+                // Get the access token
+                var accessToken = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token");
+                var userInfo = await _userAccess.GetUserProfile(accessToken);
+
+                if (userInfo != null && userInfo.PreferredUsername != null)
+                {
+                    // initiate email for user
+
+                    // need to add email template
+                    var email = new EmailMessage()
+                    {
+                        Body = "New listing added",
+                        Subject = "New listing",
+                        To = userInfo.PreferredUsername,
+                        Attachments = null
+                    };
+
+                    _messageProducer.SendingMessage(email, "emails", "emails");
+                }
 
                 var savedListing = _mapper.Map<ListingDto>(listing);
                 return CreatedAtAction(nameof(GetListing), new { id = savedListing.Id }, savedListing);
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -138,6 +180,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }

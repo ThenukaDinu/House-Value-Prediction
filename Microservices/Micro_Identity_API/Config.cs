@@ -73,9 +73,19 @@ namespace Micro_Authentication_API
                     ClientName = "VueWebApp JavaScript Client",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
-                    RedirectUris = { "http://localhost:44344/auth/callback" },
+                    RedirectUris = {
+                        "http://localhost:44344/auth/callback",
+                        "http://localhost:44344/static/silent-renew.html"
+                    },
                     PostLogoutRedirectUris = { "http://localhost:44344/" },
                     AllowedCorsOrigins = { "http://localhost:44344", "https://localhost:44344" },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = 90, // 1.5 minutes
+                    AbsoluteRefreshTokenLifetime = 0,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    UpdateAccessTokenClaimsOnRefresh = true,
+                    RequireConsent = false,
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,

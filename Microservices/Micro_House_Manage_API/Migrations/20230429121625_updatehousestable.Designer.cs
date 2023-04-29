@@ -4,6 +4,7 @@ using Micro_House_Manage_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Micro_House_Manage_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230429121625_updatehousestable")]
+    partial class updatehousestable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +60,6 @@ namespace Micro_House_Manage_API.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("PredictedPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PredictedPriceLKR")
                         .HasColumnType("float");
 
                     b.Property<int>("TotRmsAbvGrd")

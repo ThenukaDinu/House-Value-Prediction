@@ -23,7 +23,7 @@ async function doAuth() {
     }
   } catch (e) {
     console.log(e)
-    router.push({ name: 'Unauthorized' })
+    router.push({ path: '/' })
   }
 }
 

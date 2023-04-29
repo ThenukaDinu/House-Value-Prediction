@@ -98,6 +98,7 @@ namespace Micro_Identity_API.Controllers
                new Claim(JwtClaimTypes.Name, model.FullName),
                new Claim(JwtClaimTypes.GivenName, model.FirstName),
                new Claim(JwtClaimTypes.FamilyName, model.LastName),
+               new Claim(JwtClaimTypes.Email, model.Email),
                new Claim(JwtClaimTypes.Role, roleName),
                new Claim(JwtClaimTypes.WebSite, ""),
             });

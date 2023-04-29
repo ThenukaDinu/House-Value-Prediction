@@ -8,6 +8,7 @@ namespace Micro_House_Manage_API.Dtos
         public Guid? UserId { get; set; }
         public int HouseId { get; set; }
         public string Description { get; set; }
+        public double ListingPrice { get; set; }
         public ListingStatus ListingStatus { get; set; }
         public bool IsFeatured { get; set; }
     }

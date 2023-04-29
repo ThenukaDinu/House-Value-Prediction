@@ -40,7 +40,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -60,7 +60,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -96,6 +96,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -116,7 +117,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -138,6 +139,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }

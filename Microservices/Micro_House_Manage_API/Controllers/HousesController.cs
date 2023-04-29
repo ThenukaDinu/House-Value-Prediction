@@ -11,11 +11,19 @@ using Micro_House_Manage_API.Interfaces;
 using NuGet.Protocol.Core.Types;
 using AutoMapper;
 using Micro_House_Manage_API.Dtos;
+using Models.Requests;
+using System.Text.Json;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.CodeAnalysis;
+using Micro_House_Manage_API.Helper;
 
 namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HousesController : ControllerBase
     {
         private readonly IHouseRepository _houseRepository;
@@ -35,6 +43,9 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
+                var user = User;
+                // Get the user email from the ClaimsPrincipal object
+                 string userEmail = User.FindFirstValue(ClaimTypes.Email);
                 _logger.LogInformation("HousesController GetHouses executing...");
 
                 var entities = await _houseRepository.GetAllAsync();
@@ -42,7 +53,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.StackTrace);
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -62,7 +73,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -98,6 +109,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -109,7 +121,16 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
+                var user = User;
+                var userId = user.FindFirstValue("sub");
+                if (!Guid.TryParse(userId, out Guid userGuid))
+                {
+                    return Unauthorized();
+                }
+
                 var house = _mapper.Map<House>(houseDto);
+                house.UserId = userGuid;
+
                 await _houseRepository.AddAsync(house);
                 await _houseRepository.SaveChangesAsync();
 
@@ -118,7 +139,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -140,6 +161,33 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("GetValuePrediction")]
+        [Authorize(Roles = "UserRole")]
+        public async Task<IActionResult> GetValuePrediction(List<PredictionRequest> predictionRequests)
+        {
+            try
+            {
+                using var client = new HttpClient();
+
+                // Create request content
+                var json = JsonSerializer.Serialize(predictionRequests.ToArray());
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("http://localhost:44343/predict", content);
+
+                // Read the response as a string
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                return Ok(responseString);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
