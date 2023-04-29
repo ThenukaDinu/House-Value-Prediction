@@ -5,7 +5,13 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
+import { useToast } from 'vue-toast-notification'
+import 'vue-toast-notification/dist/theme-sugar.css'
 
+const toast = useToast({
+  position: 'top-right'
+})
+let toastInstance = ref({})
 const router = useRouter()
 const authStore = useAuthStore()
 const { isAuthenticated } = storeToRefs(authStore)
@@ -120,7 +126,9 @@ async function registerUser() {
       console.error('invalid form please provide valid ', formErrors)
       return
     }
-
+    toastInstance.value = toast.info('please wait we are processing your request...', {
+      duration: 6000
+    })
     const data = {
       Email: form.email.value,
       FullName: fullName.value,
@@ -134,9 +142,14 @@ async function registerUser() {
     )
     console.log(response)
     if (response.status === 200 || response.status === 201) {
-      await signIn('/')
+      setTimeout(async () => {
+        toastInstance.value.dismiss()
+        await signIn('/')
+      }, 1500)
     }
   } catch (error) {
+    toastInstance.value.dismiss()
+    toastInstance.value = toast.error('Something went wrong, please try again later!')
     console.error(error)
   }
 }

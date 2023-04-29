@@ -16,6 +16,8 @@ using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.CodeAnalysis;
+using Micro_House_Manage_API.Helper;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -41,6 +43,9 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
+                var user = User;
+                // Get the user email from the ClaimsPrincipal object
+                 string userEmail = User.FindFirstValue(ClaimTypes.Email);
                 _logger.LogInformation("HousesController GetHouses executing...");
 
                 var entities = await _houseRepository.GetAllAsync();
@@ -125,6 +130,7 @@ namespace Micro_House_Manage_API.Controllers
 
                 var house = _mapper.Map<House>(houseDto);
                 house.UserId = userGuid;
+
                 await _houseRepository.AddAsync(house);
                 await _houseRepository.SaveChangesAsync();
 

@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Micro_House_Manage_API.Tests", "Micro_House_Manage_API.Tests\Micro_House_Manage_API.Tests.csproj", "{E35B3548-71FC-40C5-8BD5-969853378BCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micro_Email_Service.Tests", "Micro_Email_Service.Tests\Micro_Email_Service.Tests.csproj", "{24AF0932-AF2D-4802-B37F-BDE1AC516F1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Micro_Email_Service.Tests", "Micro_Email_Service.Tests\Micro_Email_Service.Tests.csproj", "{24AF0932-AF2D-4802-B37F-BDE1AC516F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

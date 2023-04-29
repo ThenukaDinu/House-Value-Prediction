@@ -1,4 +1,5 @@
 using Micro_House_Manage_API.Data;
+using Micro_House_Manage_API.Helper;
 using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Repository;
 using Micro_House_Manage_API.Services;
@@ -24,11 +25,13 @@ namespace Micro_House_Manage_API
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddSingleton<IMessageProducer, MessageProducer>();
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IInquiryRepository, InqueryRepository>();
             builder.Services.AddScoped<IListingRepository, ListingRepository>();
             builder.Services.AddScoped<IMessageProducer, MessageProducer>();
+            builder.Services.AddScoped<IUserAccess, UserAccess>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

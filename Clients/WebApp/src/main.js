@@ -46,6 +46,6 @@ axios.interceptors.request.use(
     return config
   },
   (err) => {
-    console.error(err)
+    console.error($`err = {err}`)
   }
 )

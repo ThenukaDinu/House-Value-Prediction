@@ -7,7 +7,10 @@ var mgr = new Oidc.UserManager({
   response_type: 'id_token token',
   scope: 'openid profile all read write update delete',
   post_logout_redirect_uri: 'http://localhost:44344/',
-  userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+  userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+  automaticSilentRenew: true,
+  silent_redirect_uri: 'http://localhost:44344/static/silent-renew.html',
+  accessTokenExpiringNotificationTime: 10
 })
 
 const displayISLogs = String(import.meta.env.VITE_SHOW_IDENTITY_LOGS).toLowerCase() === 'true'

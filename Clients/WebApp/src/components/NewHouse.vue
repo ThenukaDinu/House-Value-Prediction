@@ -152,7 +152,7 @@ async function predictHouseValue() {
     setTimeout(() => {
       toastInstance.value.dismiss()
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, 2000)
+    }, 1500)
   } catch (error) {
     toastInstance.value.dismiss()
     toastInstance.value = toast.error('Something went wrong, please try again later!')
@@ -201,11 +201,18 @@ async function listNewHouse() {
       `${import.meta.env.VITE_BASE_URL_HOUSE_MANAGE_API}api/houses`,
       data
     )
+    const responseListing = await axios.post(
+      `${import.meta.env.VITE_BASE_URL_HOUSE_MANAGE_API}api/Listings`,
+      {
+        HouseId: response.data.id,
+        Description: '',
+        IsFeatured: true
+      }
+    )
+    toastInstance.value.dismiss()
     if (response.status === 200 || response.status === 201) {
-      toastInstance.value.dismiss()
-      toastInstance = toast.success('House listed successfully.')
+      toastInstance.value = toast.success('House listed successfully.')
       setTimeout(() => {
-        toastInstance.value.dismiss()
         router.push({ name: 'allHouses' })
       }, 1500)
     }

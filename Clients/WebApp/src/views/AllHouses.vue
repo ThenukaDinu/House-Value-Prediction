@@ -26,14 +26,12 @@ onMounted(loadAllHouses)
 <template>
   <div class="all_houses">
     <!-- grid container -->
-    <div
-      v-if="allHouses && allHouses.length"
-      v-for="house in allHouses"
-      :key="house.id"
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 mt-8 mx-6"
-    >
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 mt-8 mx-6">
       <!-- product card -->
       <a
+        v-if="allHouses && allHouses.length"
+        v-for="house in allHouses"
+        :key="house.id"
         href="#"
         class="flex flex-col bg-white drop-shadow hover:drop-shadow-lg hover:opacity-70 rounded-md select-text"
       >
