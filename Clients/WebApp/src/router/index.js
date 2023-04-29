@@ -45,6 +45,14 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/all-houses',
+      name: 'allHouses',
+      component: () => import('../views/AllHouses.vue'),
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })

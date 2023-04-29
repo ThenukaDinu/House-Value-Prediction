@@ -15,6 +15,7 @@ using Models.Requests;
 using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -47,7 +48,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.StackTrace);
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -67,7 +68,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -103,6 +104,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -114,7 +116,15 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
+                var user = User;
+                var userId = user.FindFirstValue("sub");
+                if (!Guid.TryParse(userId, out Guid userGuid))
+                {
+                    return Unauthorized();
+                }
+
                 var house = _mapper.Map<House>(houseDto);
+                house.UserId = userGuid;
                 await _houseRepository.AddAsync(house);
                 await _houseRepository.SaveChangesAsync();
 
@@ -123,7 +133,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -145,6 +155,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -155,7 +166,6 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
-                var user = User;
                 using var client = new HttpClient();
 
                 // Create request content
@@ -171,6 +181,7 @@ namespace Micro_House_Manage_API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("An error occurred, {ex}", ex);
                 return StatusCode(500, ex.Message);
             }
         }

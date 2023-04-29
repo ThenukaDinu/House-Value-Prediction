@@ -3,7 +3,15 @@ import { reactive, ref, computed, onMounted, initCustomFormatter } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import { storeToRefs } from 'pinia'
+import currency from 'currency.js'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toast-notification'
+import 'vue-toast-notification/dist/theme-sugar.css'
 
+const router = useRouter()
+const toast = useToast({
+  position: 'top-right'
+})
 let form = reactive({
   OverallQual: {
     value: '',
@@ -64,6 +72,12 @@ let form = reactive({
     label: 'Size of garage',
     description: 'Size of garage in square feet',
     type: 'Number'
+  },
+  Location: {
+    value: '',
+    label: 'Location',
+    description: 'Location of the house',
+    type: 'Text'
   }
 })
 
@@ -97,14 +111,22 @@ let errorsInitialVal = {
   },
   GarageArea: {
     errors: []
+  },
+  Location: {
+    errors: []
   }
 }
 
 const houseValue = ref(0)
+const houseValueLKR = ref(0)
 
 let formErrors = reactive(JSON.parse(JSON.stringify(errorsInitialVal)))
+let toastInstance = ref({})
 
 async function predictHouseValue() {
+  toastInstance.value = toast.info('please wait we are processing your request...', {
+    duration: 6000
+  })
   try {
     const data = {
       OverallQual: form.OverallQual.value,
@@ -124,8 +146,72 @@ async function predictHouseValue() {
       dataList
     )
     houseValue.value = response?.data?.predictions[0]
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (import.meta.env.VITE_ENABLE_LKR_COVERTION === 'true') {
+      houseValueLKR.value = await getLRKValue(houseValue.value)
+    }
+    setTimeout(() => {
+      toastInstance.value.dismiss()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 2000)
   } catch (error) {
+    toastInstance.value.dismiss()
+    toastInstance.value = toast.error('Something went wrong, please try again later!')
+    console.error(error)
+  }
+}
+async function getLRKValue(usdValue) {
+  try {
+    if (!usdValue) return 0
+
+    const response = await axios.get(
+      `https://api.apilayer.com/exchangerates_data/convert?to=LKR&from=USD&amount=${usdValue}`,
+      {
+        headers: {
+          apikey: import.meta.env.VITE_EXCHANGERATES_DATA.toString()
+        }
+      }
+    )
+    console.log(response.data.result)
+    return response.data.result
+  } catch (error) {
+    console.error(error)
+  }
+}
+async function listNewHouse() {
+  try {
+    toastInstance.value = toast.info('please wait we are processing your request...', {
+      duration: 6000
+    })
+    const data = {
+      location: form.Location.value,
+      overallQual: form.OverallQual.value,
+      yearBuilt: form.YearBuilt.value,
+      yearRemodAdd: form.YearRemodAdd.value,
+      totalBsmtSF: form.TotalBsmtSF.value,
+      a1stFlrSF: form.A1stFlrSF.value,
+      grLivArea: form.GrLivArea.value,
+      fullBath: form.FullBath.value,
+      totRmsAbvGrd: form.TotRmsAbvGrd.value,
+      garageCars: form.GarageCars.value,
+      garageArea: form.GarageArea.value,
+      predictedPrice: houseValue.value,
+      PredictedPriceLKR: houseValueLKR.value
+    }
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL_HOUSE_MANAGE_API}api/houses`,
+      data
+    )
+    if (response.status === 200 || response.status === 201) {
+      toastInstance.value.dismiss()
+      toastInstance = toast.success('House listed successfully.')
+      setTimeout(() => {
+        toastInstance.value.dismiss()
+        router.push({ name: 'allHouses' })
+      }, 1500)
+    }
+  } catch (error) {
+    toastInstance.value.dismiss()
+    toastInstance.value = toast.error('Something went wrong, please try again later!')
     console.error(error)
   }
 }
@@ -134,15 +220,59 @@ async function predictHouseValue() {
 <template>
   <div class="new_house flex justify-center items-center">
     <div class="w-full max-w-6xl mt-5">
-      <div class="prediction_results">
-        <p class="text-xl pt-5 shadow-md pl-8">
-          Predicted Price LKR: <span class="font-bold">{{ houseValue }}</span>
-        </p>
+      <div class="flex items-center pt-3 shadow-md">
+        <div class="prediction_results">
+          <div class="text-xl pl-8">
+            <div>Predicted Price</div>
+            <div>
+              USD:
+              <span class="font-bold">{{
+                currency(houseValue, { separator: ',', precision: 2, symbol: '$ ' }).format()
+              }}</span>
+            </div>
+            <div>
+              LKR:
+              <span class="font-bold">{{
+                currency(houseValueLKR, { separator: ',', precision: 2, symbol: 'Rs ' }).format()
+              }}</span>
+            </div>
+          </div>
+        </div>
+        <button
+          class="ml-14 bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="button"
+          @click.native="listNewHouse"
+          v-if="houseValue"
+        >
+          List House Now
+        </button>
       </div>
       <form
         class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         @submit.prevent="predictHouseValue"
       >
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" :for="form.Location.label">
+            {{ form.Location.label }}
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            :class="formErrors.Location.errors.length ? 'border-red-500' : ''"
+            id="Location"
+            :type="form.Location.type"
+            :placeholder="form.Location.description"
+            v-model="form.Location.value"
+            autofocus
+          />
+          <p
+            class="text-red-500 text-xs italic"
+            v-for="error in formErrors.Location.errors"
+            :key="error.id"
+          >
+            {{ error.message }}
+          </p>
+        </div>
+
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" :for="form.OverallQual.label">
             {{ form.OverallQual.label }}
@@ -154,7 +284,6 @@ async function predictHouseValue() {
             :type="form.OverallQual.type"
             :placeholder="form.OverallQual.description"
             v-model="form.OverallQual.value"
-            autofocus
           />
           <p
             class="text-red-500 text-xs italic"

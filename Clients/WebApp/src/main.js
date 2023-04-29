@@ -39,7 +39,7 @@ axios.interceptors.request.use(
     console.log(user)
     if (user) {
       const authToken = user.access_token
-      if (authToken) {
+      if (authToken && !config.url.includes('apilayer.com')) {
         config.headers.Authorization = `Bearer ${authToken}`
       }
     }
