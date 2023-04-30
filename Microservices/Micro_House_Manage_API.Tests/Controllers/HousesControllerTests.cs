@@ -8,10 +8,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Models;
+using Models.Others;
+using Models.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Micro_House_Manage_API.Tests.Controllers
@@ -117,8 +122,15 @@ namespace Micro_House_Manage_API.Tests.Controllers
             // Arranges
             var house = A.Fake<House>();
             var houseDto = A.Fake<HouseDto>();
-            A.CallTo(() => _mapper.Map<House>(houseDto)).Returns(house);
             var savedHouseDto = A.Fake<HouseDto>();
+            var userId = Guid.NewGuid().ToString();
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+                new Claim("sub", userId) },
+                Guid.NewGuid().ToString()));
+            var httpContext = new DefaultHttpContext { User = user };
+            _controller.ControllerContext.HttpContext = httpContext;
+
+            A.CallTo(() => _mapper.Map<House>(houseDto)).Returns(house);
             A.CallTo(() => _houseRepository.AddAsync(house));
             A.CallTo(() => _houseRepository.SaveChangesAsync());
             A.CallTo(() => _mapper.Map<HouseDto>(house)).Returns(savedHouseDto);
@@ -134,6 +146,32 @@ namespace Micro_House_Manage_API.Tests.Controllers
             var result = results.Result as CreatedAtActionResult;
             result.Value.Should().BeEquivalentTo(savedHouseDto);
             result.StatusCode.Should().Be(StatusCodes.Status201Created);
+        }
+
+        [Fact]
+        public async Task HouseController_GetValuePrediction_ReturnsOk()
+        {
+            // Arrange
+            var predictionRequests = A.Fake<List<PredictionRequest>>();
+            var json = JsonSerializer.Serialize(predictionRequests.ToArray());
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var responseString = "test response";
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(responseString, Encoding.UTF8, "application/json")
+            };
+
+            var httpClient = A.Fake<HttpClient>();
+            A.CallTo(() => httpClient.PostAsync(A<string>.Ignored, content)).Returns(Task.FromResult(response));
+
+            // Act
+            var result = await _controller.GetValuePrediction(predictionRequests);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okObjectResult = result as OkObjectResult;
+            okObjectResult.Value.Should().Be(responseString);
         }
     }
 }

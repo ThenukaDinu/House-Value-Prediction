@@ -43,9 +43,6 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
-                var user = User;
-                // Get the user email from the ClaimsPrincipal object
-                 string userEmail = User.FindFirstValue(ClaimTypes.Email);
                 _logger.LogInformation("HousesController GetHouses executing...");
 
                 var entities = await _houseRepository.GetAllAsync();

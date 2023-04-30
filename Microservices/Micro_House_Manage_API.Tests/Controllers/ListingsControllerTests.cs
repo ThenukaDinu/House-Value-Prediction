@@ -4,13 +4,18 @@ using FluentAssertions;
 using Micro_House_Manage_API.Controllers;
 using Micro_House_Manage_API.Dtos;
 using Micro_House_Manage_API.Interfaces;
+using Micro_House_Manage_API.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Models;
+using Models.Others;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,13 +27,17 @@ namespace Micro_House_Manage_API.Tests.Controllers
         private readonly IListingRepository _listingRepository;
         private readonly ILogger<ListingsController> _logger;
         private readonly ListingsController _controller;
+        private readonly IMessageProducer _messageProducer;
+        private readonly IUserAccess _userAccess;
 
         public ListingsControllerTests()
         {
             _listingRepository = A.Fake<IListingRepository>();
             _logger = A.Fake<ILogger<ListingsController>>();
             _mapper = A.Fake<IMapper>();
-            _controller = new ListingsController(_listingRepository, _mapper, _logger);
+            _messageProducer = A.Fake<IMessageProducer>();
+            _userAccess = A.Fake<IUserAccess>();
+            _controller = new ListingsController(_listingRepository, _mapper, _logger, _userAccess, _messageProducer);
         }
 
         [Fact]
@@ -115,13 +124,28 @@ namespace Micro_House_Manage_API.Tests.Controllers
         public async Task ListingsController_PostListing_ReturnsCreatedActionResult()
         {
             // Arranges
+            var accessToken = "fake_access_token";
             var listing = A.Fake<Listing>();
             var listingDto = A.Fake<ListingDto>();
-            A.CallTo(() => _mapper.Map<Listing>(listingDto)).Returns(listing);
+            var userInfo = A.Fake<UserInfo>();
             var savedListingDto = A.Fake<ListingDto>();
+            var email = A.Fake<EmailMessage>();
+            var userId = Guid.NewGuid().ToString();
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { 
+                new Claim("sub", userId) },
+                Guid.NewGuid().ToString()));
+
+            var httpContext = new DefaultHttpContext { User = user };
+            httpContext.Request.Headers["Authorization"] = $"Bearer {accessToken}";
+            _controller.ControllerContext.HttpContext = httpContext;
+
+            A.CallTo(() => _mapper.Map<Listing>(listingDto)).Returns(listing);
             A.CallTo(() => _listingRepository.AddAsync(listing));
             A.CallTo(() => _listingRepository.SaveChangesAsync());
             A.CallTo(() => _mapper.Map<ListingDto>(listing)).Returns(savedListingDto);
+            A.CallTo(() => _userAccess.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token", httpContext)).Returns(accessToken);
+            A.CallTo(() => _userAccess.GetUserProfile(accessToken)).Returns(userInfo);
+            A.CallTo(() => _messageProducer.SendingMessage(email, "email", "email"));
 
             // Act
             var results = await _controller.PostListing(listingDto);
