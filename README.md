@@ -12,6 +12,8 @@
 
 ## docker commands for ml_flask_api:
 
+## media server: http://localhost:44345/
+
 <br>
 
 `docker build -t ml_flask_api .`
