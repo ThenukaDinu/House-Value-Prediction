@@ -35,6 +35,7 @@ namespace Micro_House_Manage_API
             builder.Services.AddScoped<IUserAccess, UserAccess>();
             builder.Services.AddScoped<IHttpClientService, HttpClientService>();
             builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+            builder.Services.AddScoped<IHousePhotoRepository, HousePhotoRepository>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

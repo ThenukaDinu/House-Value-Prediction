@@ -19,5 +19,6 @@
         public Guid? UserId { get; set; }
         public ICollection<Inquiry> Inquiries { get; set; }
         public Listing Listing { get; set; }
+        public ICollection<HousePhoto> HousePhotos { get; set; }
     }
 }

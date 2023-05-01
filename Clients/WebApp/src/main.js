@@ -36,7 +36,6 @@ axios.interceptors.request.use(
   async (config) => {
     const user = await mgr.getUser()
     const userJson = JSON.parse(JSON.stringify(user))
-    console.log(user)
     if (user) {
       const authToken = user.access_token
       if (authToken && !config.url.includes('apilayer.com')) {

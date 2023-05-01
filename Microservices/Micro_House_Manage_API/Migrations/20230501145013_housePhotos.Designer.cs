@@ -4,6 +4,7 @@ using Micro_House_Manage_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Micro_House_Manage_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230501145013_housePhotos")]
+    partial class housePhotos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,9 +96,6 @@ namespace Micro_House_Manage_API.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HouseId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -107,8 +106,6 @@ namespace Micro_House_Manage_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HouseId");
 
                     b.ToTable("HousePhotos");
                 });
@@ -197,15 +194,6 @@ namespace Micro_House_Manage_API.Migrations
                     b.ToTable("Listings");
                 });
 
-            modelBuilder.Entity("Models.HousePhoto", b =>
-                {
-                    b.HasOne("Models.House", null)
-                        .WithMany("HousePhotos")
-                        .HasForeignKey("HouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Models.Inquiry", b =>
                 {
                     b.HasOne("Models.House", "House")
@@ -236,8 +224,6 @@ namespace Micro_House_Manage_API.Migrations
 
             modelBuilder.Entity("Models.House", b =>
                 {
-                    b.Navigation("HousePhotos");
-
                     b.Navigation("Inquiries");
 
                     b.Navigation("Listing");
