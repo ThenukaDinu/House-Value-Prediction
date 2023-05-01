@@ -4,6 +4,7 @@ using FluentAssertions;
 using Micro_House_Manage_API.Controllers;
 using Micro_House_Manage_API.Dtos;
 using Micro_House_Manage_API.Interfaces;
+using Micro_House_Manage_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,13 +28,17 @@ namespace Micro_House_Manage_API.Tests.Controllers
         private readonly IHouseRepository _houseRepository;
         private readonly ILogger<HousesController> _logger;
         private readonly HousesController _controller;
+        private readonly IHttpClientService _httpClientService;
+        private readonly IConfigurationService _configurationService;
 
         public HousesControllerTests()
         {
             _houseRepository = A.Fake<IHouseRepository>();
             _logger = A.Fake<ILogger<HousesController>>();
             _mapper = A.Fake<IMapper>();
-            _controller = new HousesController(_houseRepository, _mapper, _logger);
+            _httpClientService = A.Fake<IHttpClientService>();
+            _configurationService = A.Fake<IConfigurationService>();
+            _controller = new HousesController(_houseRepository, _mapper, _logger, _httpClientService, _configurationService);
         }
 
         [Fact]
@@ -149,29 +154,29 @@ namespace Micro_House_Manage_API.Tests.Controllers
         }
 
         [Fact]
-        public async Task HouseController_GetValuePrediction_ReturnsOk()
+        public async Task GetValuePrediction_ReturnsOkObjectResult_WithResponseString()
         {
-            // Arrange
+            // Arranges
             var predictionRequests = A.Fake<List<PredictionRequest>>();
             var json = JsonSerializer.Serialize(predictionRequests.ToArray());
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = A.Fake<HttpResponseMessage>();
+            string responseString = "fake response content";
+            string predictionServiceUrl = "http://localhost:44343/predict";
 
-            var responseString = "test response";
-            var response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(responseString, Encoding.UTF8, "application/json")
-            };
-
-            var httpClient = A.Fake<HttpClient>();
-            A.CallTo(() => httpClient.PostAsync(A<string>.Ignored, content)).Returns(Task.FromResult(response));
+            A.CallTo(() => _configurationService.GetSingleValue<string>("PredictionAPI:PredictionUrl")).Returns(predictionServiceUrl);
+            A.CallTo(() => _httpClientService.PostAsync(predictionServiceUrl, json)).Returns(response);
+            A.CallTo(() => _httpClientService.ReadAsStringAsync(response)).Returns(Task.FromResult(responseString));
 
             // Act
-            var result = await _controller.GetValuePrediction(predictionRequests);
+            var results = await _controller.GetValuePrediction(predictionRequests);
 
-            // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okObjectResult = result as OkObjectResult;
-            okObjectResult.Value.Should().Be(responseString);
+            // Asserts
+            results.Should().BeOfType<OkObjectResult>();
+            results.As<OkObjectResult>().Value.Should().Be("fake response content");
+            A.CallTo(() => _httpClientService.PostAsync(predictionServiceUrl, json)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _httpClientService.ReadAsStringAsync(response)).MustHaveHappenedOnceExactly();
+            var content = results.As<OkObjectResult>().Value;
+            content.Should().NotBeNull();
         }
     }
 }

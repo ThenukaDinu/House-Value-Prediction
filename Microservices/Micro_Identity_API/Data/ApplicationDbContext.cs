@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace Micro_Identity_API.Data
 {
@@ -10,5 +11,7 @@ namespace Micro_Identity_API.Data
         {
             
         }
+
+        public DbSet<Interest>? Interests { get; set; }
     }
 }

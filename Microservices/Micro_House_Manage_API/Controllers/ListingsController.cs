@@ -134,7 +134,6 @@ namespace Micro_House_Manage_API.Controllers
                 await _listingRepository.SaveChangesAsync();
 
                 // Get the access token
-                //var accessToken = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token");
                 var accessToken = await _userAccess.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token", HttpContext);
                 var userInfo = await _userAccess.GetUserProfile(accessToken);
 

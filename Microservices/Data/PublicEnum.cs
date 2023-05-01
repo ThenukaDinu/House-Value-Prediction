@@ -41,5 +41,16 @@
             WebScrapingFinished = 4,
             ModelTrainingFinished = 5
         }
+
+        public enum InterestType
+        {
+            Location = 0,
+            NoOfRooms = 1,
+            NoOfBathRooms = 2,
+            NoOfVehiclesInGarage = 3,
+            ConstructionYear = 4,
+            TotalSquareFeet = 5,
+            RemodelYear = 6,
+        }
     }
 }
