@@ -24,7 +24,7 @@ onMounted(loadAllHouses)
 </script>
 
 <template>
-  <div class="all_houses">
+  <div class="all_houses pt-1 pb-6">
     <!-- grid container -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 mt-8 mx-6">
       <!-- product card -->
@@ -36,7 +36,10 @@ onMounted(loadAllHouses)
         class="flex flex-col bg-white drop-shadow hover:drop-shadow-lg hover:opacity-70 rounded-md select-text"
       >
         <img
-          src=" https://www.kindacode.com/wp-content/uploads/2022/07/kindacode-example.png"
+          :src="
+            house?.housePhotos[0]?.url ||
+            'https://www.kindacode.com/wp-content/uploads/2022/07/kindacode-example.png'
+          "
           alt="Fiction Product"
           class="h-36 object-cover rounded-tl-md rounded-tr-md"
         />

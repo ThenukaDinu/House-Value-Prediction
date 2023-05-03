@@ -7,11 +7,13 @@ import mgr from '../services/security'
 
 import './assets/main.css'
 import { useAuthStore } from './stores/auth'
+import Uploader from 'vue-media-upload'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.component('Uploader', Uploader)
 
 app.mount('#app')
 

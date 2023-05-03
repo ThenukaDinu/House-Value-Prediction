@@ -119,6 +119,7 @@ let errorsInitialVal = {
 
 const houseValue = ref(0)
 const houseValueLKR = ref(0)
+const isImageUploaderError = ref(false)
 
 let formErrors = reactive(JSON.parse(JSON.stringify(errorsInitialVal)))
 let toastInstance = ref({})
@@ -152,7 +153,7 @@ async function predictHouseValue() {
     setTimeout(() => {
       toastInstance.value.dismiss()
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, 1500)
+    }, 1000)
   } catch (error) {
     toastInstance.value.dismiss()
     toastInstance.value = toast.error('Something went wrong, please try again later!')
@@ -179,8 +180,23 @@ async function getLRKValue(usdValue) {
 }
 async function listNewHouse() {
   try {
+    if (media.added.length <= 0) {
+      isImageUploaderError.value = true
+      toastInstance.value = toast.warning('Please upload at least one photo of the house.', {
+        duration: 4000
+      })
+      return
+    }
+
     toastInstance.value = toast.info('please wait we are processing your request...', {
       duration: 6000
+    })
+    const HousePhotos = []
+    media.added.forEach((m) => {
+      HousePhotos.push({
+        Url: `${import.meta.env.VITE_BASE_MEDIA_SERVER_URL}${m.name}`,
+        Name: m.name
+      })
     })
     const data = {
       location: form.Location.value,
@@ -195,8 +211,10 @@ async function listNewHouse() {
       garageCars: form.GarageCars.value,
       garageArea: form.GarageArea.value,
       predictedPrice: houseValue.value,
-      PredictedPriceLKR: houseValueLKR.value
+      PredictedPriceLKR: houseValueLKR.value,
+      HousePhotos
     }
+
     const response = await axios.post(
       `${import.meta.env.VITE_BASE_URL_HOUSE_MANAGE_API}api/houses`,
       data
@@ -222,12 +240,32 @@ async function listNewHouse() {
     console.error(error)
   }
 }
+
+const uploadPath = ref(`${import.meta.env.VITE_BASE_URL_HOUSE_MANAGE_API}api/HousePhotos/Upload`)
+let media = reactive({
+  saved: [],
+  added: [],
+  removed: []
+})
+
+function changeMedia(media) {
+  console.log(media)
+}
+
+function addMedia(_, addedMedia) {
+  isImageUploaderError.value = false
+  media.added = addedMedia
+}
+function removeMedia(_, removedMedia) {
+  isImageUploaderError.value = false
+  media.removed = removedMedia
+}
 </script>
 
 <template>
   <div class="new_house flex justify-center items-center">
     <div class="w-full max-w-6xl mt-5">
-      <div class="flex items-center pt-3 shadow-md">
+      <div class="flex items-center pt-5 pb-3 shadow-md">
         <div class="prediction_results">
           <div class="text-xl pl-8">
             <div>Predicted Price</div>
@@ -254,6 +292,17 @@ async function listNewHouse() {
           List House Now
         </button>
       </div>
+      <label v-if="houseValue" class="block text-gray-700 text-sm font-bold mt-4 mb-2 ml-3">
+        Upload house photos
+      </label>
+      <Uploader
+        v-if="houseValue"
+        :class="['mt-5 mb-3 mx-3', { 'border-red-500 border-2': isImageUploaderError }]"
+        :server="uploadPath"
+        @change="changeMedia"
+        @add="addMedia"
+        @remove="removeMedia"
+      />
       <form
         class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         @submit.prevent="predictHouseValue"

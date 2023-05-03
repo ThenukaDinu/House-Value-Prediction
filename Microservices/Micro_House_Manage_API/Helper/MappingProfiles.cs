@@ -19,6 +19,8 @@ namespace Micro_House_Manage_API.Helper
             CreateMap<InterestDto, Interest>();
             CreateMap<UserInfo, UserDto>();
             CreateMap<UserDto, UserInfo>();
+            CreateMap<HousePhoto, HousePhotoDto>();
+            CreateMap<HousePhotoDto, HousePhoto>();
         }
     }
 }
