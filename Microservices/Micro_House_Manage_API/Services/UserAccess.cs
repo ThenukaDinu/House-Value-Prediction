@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Micro_House_Manage_API.Services
 {
@@ -26,6 +27,12 @@ namespace Micro_House_Manage_API.Services
             var userInfo = JsonSerializer.Deserialize<UserInfo>(jsonContent);
 
             return userInfo;
+        }
+
+        public async Task<string> GetTokenAsync(string scheme, string tokenName, HttpContext httpContext)
+        {
+            var token = await httpContext.GetTokenAsync(scheme, tokenName);
+            return token;
         }
     }
 }

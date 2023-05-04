@@ -57,3 +57,8 @@ Clients/WebApp/*.ntvs*
 Clients/WebApp/*.njsproj
 Clients/WebApp/*.sln
 Clients/WebApp/*.sw?
+
+MediaServer/node_modules
+MediaServer/dist
+MediaServer/*.local
+MediaServer/.vscode/*

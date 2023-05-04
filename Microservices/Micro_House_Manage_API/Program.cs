@@ -26,12 +26,16 @@ namespace Micro_House_Manage_API
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
+            // dependancy injection
             builder.Services.AddSingleton<IMessageProducer, MessageProducer>();
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IInquiryRepository, InqueryRepository>();
             builder.Services.AddScoped<IListingRepository, ListingRepository>();
             builder.Services.AddScoped<IMessageProducer, MessageProducer>();
             builder.Services.AddScoped<IUserAccess, UserAccess>();
+            builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+            builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+            builder.Services.AddScoped<IHousePhotoRepository, HousePhotoRepository>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

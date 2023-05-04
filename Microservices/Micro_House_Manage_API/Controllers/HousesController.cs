@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.CodeAnalysis;
 using Micro_House_Manage_API.Helper;
+using Micro_House_Manage_API.Services;
 
 namespace Micro_House_Manage_API.Controllers
 {
@@ -29,12 +30,16 @@ namespace Micro_House_Manage_API.Controllers
         private readonly IHouseRepository _houseRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<HousesController> _logger;
+        private readonly IHttpClientService _httpClientService;
+        private readonly IConfigurationService _configurationService;
 
-        public HousesController(IHouseRepository houseRepository, IMapper mapper, ILogger<HousesController> logger)
+        public HousesController(IHouseRepository houseRepository, IMapper mapper, ILogger<HousesController> logger, IHttpClientService httpClientService, IConfigurationService configurationService)
         {
             _houseRepository = houseRepository;
             _mapper = mapper;
             _logger = logger;
+            _httpClientService = httpClientService;
+            _configurationService = configurationService;
         }
 
         // GET: api/Houses
@@ -43,9 +48,6 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
-                var user = User;
-                // Get the user email from the ClaimsPrincipal object
-                 string userEmail = User.FindFirstValue(ClaimTypes.Email);
                 _logger.LogInformation("HousesController GetHouses executing...");
 
                 var entities = await _houseRepository.GetAllAsync();
@@ -172,16 +174,17 @@ namespace Micro_House_Manage_API.Controllers
         {
             try
             {
-                using var client = new HttpClient();
-
                 // Create request content
-                var json = JsonSerializer.Serialize(predictionRequests.ToArray());
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                string json = JsonSerializer.Serialize(predictionRequests.ToArray());
 
-                var response = await client.PostAsync("http://localhost:44343/predict", content);
+                // Get URL of prdiction service
+                string predictionServiceUrl = _configurationService.GetSingleValue<string>("PredictionAPI:PredictionUrl");
+
+                // Get response from Flask API
+                var response = await _httpClientService.PostAsync("http://localhost:44343/predict", json);
 
                 // Read the response as a string
-                var responseString = await response.Content.ReadAsStringAsync();
+                var responseString = await _httpClientService.ReadAsStringAsync(response);
 
                 return Ok(responseString);
             }

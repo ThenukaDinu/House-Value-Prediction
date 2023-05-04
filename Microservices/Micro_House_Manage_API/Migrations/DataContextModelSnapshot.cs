@@ -83,6 +83,36 @@ namespace Micro_House_Manage_API.Migrations
                     b.ToTable("Houses");
                 });
 
+            modelBuilder.Entity("Models.HousePhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HouseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HouseId");
+
+                    b.ToTable("HousePhotos");
+                });
+
             modelBuilder.Entity("Models.Inquiry", b =>
                 {
                     b.Property<int>("Id")
@@ -167,6 +197,15 @@ namespace Micro_House_Manage_API.Migrations
                     b.ToTable("Listings");
                 });
 
+            modelBuilder.Entity("Models.HousePhoto", b =>
+                {
+                    b.HasOne("Models.House", null)
+                        .WithMany("HousePhotos")
+                        .HasForeignKey("HouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Models.Inquiry", b =>
                 {
                     b.HasOne("Models.House", "House")
@@ -197,6 +236,8 @@ namespace Micro_House_Manage_API.Migrations
 
             modelBuilder.Entity("Models.House", b =>
                 {
+                    b.Navigation("HousePhotos");
+
                     b.Navigation("Inquiries");
 
                     b.Navigation("Listing");

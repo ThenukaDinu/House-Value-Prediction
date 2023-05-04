@@ -4,14 +4,20 @@ using FluentAssertions;
 using Micro_House_Manage_API.Controllers;
 using Micro_House_Manage_API.Dtos;
 using Micro_House_Manage_API.Interfaces;
+using Micro_House_Manage_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Models;
+using Models.Others;
+using Models.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Micro_House_Manage_API.Tests.Controllers
@@ -22,13 +28,17 @@ namespace Micro_House_Manage_API.Tests.Controllers
         private readonly IHouseRepository _houseRepository;
         private readonly ILogger<HousesController> _logger;
         private readonly HousesController _controller;
+        private readonly IHttpClientService _httpClientService;
+        private readonly IConfigurationService _configurationService;
 
         public HousesControllerTests()
         {
             _houseRepository = A.Fake<IHouseRepository>();
             _logger = A.Fake<ILogger<HousesController>>();
             _mapper = A.Fake<IMapper>();
-            _controller = new HousesController(_houseRepository, _mapper, _logger);
+            _httpClientService = A.Fake<IHttpClientService>();
+            _configurationService = A.Fake<IConfigurationService>();
+            _controller = new HousesController(_houseRepository, _mapper, _logger, _httpClientService, _configurationService);
         }
 
         [Fact]
@@ -117,8 +127,15 @@ namespace Micro_House_Manage_API.Tests.Controllers
             // Arranges
             var house = A.Fake<House>();
             var houseDto = A.Fake<HouseDto>();
-            A.CallTo(() => _mapper.Map<House>(houseDto)).Returns(house);
             var savedHouseDto = A.Fake<HouseDto>();
+            var userId = Guid.NewGuid().ToString();
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+                new Claim("sub", userId) },
+                Guid.NewGuid().ToString()));
+            var httpContext = new DefaultHttpContext { User = user };
+            _controller.ControllerContext.HttpContext = httpContext;
+
+            A.CallTo(() => _mapper.Map<House>(houseDto)).Returns(house);
             A.CallTo(() => _houseRepository.AddAsync(house));
             A.CallTo(() => _houseRepository.SaveChangesAsync());
             A.CallTo(() => _mapper.Map<HouseDto>(house)).Returns(savedHouseDto);
@@ -134,6 +151,32 @@ namespace Micro_House_Manage_API.Tests.Controllers
             var result = results.Result as CreatedAtActionResult;
             result.Value.Should().BeEquivalentTo(savedHouseDto);
             result.StatusCode.Should().Be(StatusCodes.Status201Created);
+        }
+
+        [Fact]
+        public async Task GetValuePrediction_ReturnsOkObjectResult_WithResponseString()
+        {
+            // Arranges
+            var predictionRequests = A.Fake<List<PredictionRequest>>();
+            var json = JsonSerializer.Serialize(predictionRequests.ToArray());
+            HttpResponseMessage response = A.Fake<HttpResponseMessage>();
+            string responseString = "fake response content";
+            string predictionServiceUrl = "http://localhost:44343/predict";
+
+            A.CallTo(() => _configurationService.GetSingleValue<string>("PredictionAPI:PredictionUrl")).Returns(predictionServiceUrl);
+            A.CallTo(() => _httpClientService.PostAsync(predictionServiceUrl, json)).Returns(response);
+            A.CallTo(() => _httpClientService.ReadAsStringAsync(response)).Returns(Task.FromResult(responseString));
+
+            // Act
+            var results = await _controller.GetValuePrediction(predictionRequests);
+
+            // Asserts
+            results.Should().BeOfType<OkObjectResult>();
+            results.As<OkObjectResult>().Value.Should().Be("fake response content");
+            A.CallTo(() => _httpClientService.PostAsync(predictionServiceUrl, json)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _httpClientService.ReadAsStringAsync(response)).MustHaveHappenedOnceExactly();
+            var content = results.As<OkObjectResult>().Value;
+            content.Should().NotBeNull();
         }
     }
 }

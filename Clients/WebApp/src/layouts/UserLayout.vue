@@ -42,9 +42,9 @@ onMounted(() => {
       <router-link to="/" class="active">Home</router-link>
       <router-link to="/estimate-value">Estimate Value</router-link>
       <router-link to="/all-houses">Houses</router-link>
-      <a href="#inqiery">Inquiry</a>
-      <a href="#profile">Profile</a>
-      <a href="#about">About</a>
+      <router-link to="my-inquiries">My Inquiry</router-link>
+      <router-link to="/profile">Profile</router-link>
+      <router-link to="/about">About</router-link>
       <a class="logout" href="#logout" @click="logout">Logout</a>
       <a href="javascript:void(0);" class="icon" onclick="setResponsive()">
         <i class="fa fa-bars"></i>

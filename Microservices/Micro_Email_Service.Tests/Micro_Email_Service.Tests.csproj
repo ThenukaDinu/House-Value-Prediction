@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Micro_Email_Service\Micro_Email_Service.csproj" />
+    <ProjectReference Include="..\Micro_House_Manage_API\Micro_House_Manage_API.csproj" />
     <ProjectReference Include="..\SettingsModels\SettingsModels.csproj" />
   </ItemGroup>
 
