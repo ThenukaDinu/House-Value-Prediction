@@ -16,7 +16,7 @@ Microservices/SettingsModels/obj
 Microservices/Helpers/bin
 Microservices/Helpers/obj
 
-MLApplications/FlaskAPI/Models
+MLApplications/FlaskAPI/Models/*.h5
 MLApplications/FlaskAPI/.pytest_cache
 MLApplications/FlaskAPI/__pycache__
 
