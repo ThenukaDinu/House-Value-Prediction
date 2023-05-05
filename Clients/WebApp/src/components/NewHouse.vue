@@ -224,7 +224,8 @@ async function listNewHouse() {
       {
         HouseId: response.data.id,
         Description: '',
-        IsFeatured: true
+        IsFeatured: true,
+        listingPrice: houseValue.value
       }
     )
     toastInstance.value.dismiss()

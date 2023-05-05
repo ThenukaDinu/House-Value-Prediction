@@ -19,11 +19,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Micro_House_Manage_API.Services;
 using Models.Requests;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ListingsController : ControllerBase
     {
         private readonly IListingRepository _listingRepository;
@@ -141,16 +144,22 @@ namespace Micro_House_Manage_API.Controllers
                 {
                     // initiate email for user
 
-                    // need to add email template
+                    // Load email template and replace the values 
+                    string rootPath = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+                    string htmlString = System.IO.File.ReadAllText(Path.Combine(rootPath, "Templates", "ListingTemplate.html"));
+                    htmlString = htmlString.Replace("[username]", userInfo.GivenName);
+                    htmlString = htmlString.Replace("[email]", userInfo.PreferredUsername);
+                    htmlString = htmlString.Replace("[listingprice]", listing.ListingPrice.ToString());
+
                     var email = new EmailMessage()
                     {
-                        Body = "New listing added",
-                        Subject = "New listing",
+                        Body = htmlString,
+                        Subject = "New listing added",
                         To = userInfo.PreferredUsername,
                         Attachments = null
                     };
 
-                    //_messageProducer.SendingMessage(email, "emails", "emails");
+                    _messageProducer.SendingMessage(email, "emails", "emails");
                 }
 
                 var savedListing = _mapper.Map<ListingDto>(listing);

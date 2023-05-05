@@ -23,7 +23,7 @@ namespace Micro_Email_Service.Services
 
         public EmailSendService(IConfiguration configuration, ILogger<EmailSendService> logger)
         {
-            _config  = configuration;
+            _config = configuration;
             _logger = logger;
         }
 

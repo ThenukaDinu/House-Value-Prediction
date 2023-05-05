@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Configuration;
@@ -9,6 +10,7 @@ namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HousePhotosController : ControllerBase
     {
         private readonly ILogger<HousePhotosController> _logger;

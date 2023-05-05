@@ -73,7 +73,7 @@ function isPasswordValid(password) {
 }
 
 const fullName = computed(() => {
-  return form.firstName.value + form.lastName.value
+  return form.firstName.value + ' ' + form.lastName.value
 })
 
 const isInvalidForm = computed(() => {

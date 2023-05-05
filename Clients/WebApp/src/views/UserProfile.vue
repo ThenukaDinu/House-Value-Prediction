@@ -78,7 +78,7 @@ onCreated()
                   <div class="relative">
                     <img
                       alt="..."
-                      src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
+                      src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                       class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
                     />
                   </div>

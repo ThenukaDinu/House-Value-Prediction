@@ -11,11 +11,13 @@ using Micro_House_Manage_API.Interfaces;
 using Micro_House_Manage_API.Repository;
 using AutoMapper;
 using Micro_House_Manage_API.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micro_House_Manage_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class InquiriesController : ControllerBase
     {
         private readonly IInquiryRepository _inquiryRepository;
